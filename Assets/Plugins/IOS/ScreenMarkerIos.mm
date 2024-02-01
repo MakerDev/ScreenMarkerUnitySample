@@ -998,8 +998,12 @@ extern "C"
     {
         CGRect rect = CGRectMake(x, y, width, height);
         NSString* textString = [NSString stringWithUTF8String:text];
-        NSString* fontNameString = [NSString stringWithUTF8String:fontName];
-        UIFont* font = [UIFont fontWithName:fontNameString size:fontSize];
+        UIFont* font = nil;
+        if (fontName != nil)
+        {
+            NSString* fontNameString = [NSString stringWithUTF8String:fontName];
+            font = [UIFont fontWithName:fontNameString size:fontSize];
+        }
         NSString* colorStringString = [NSString stringWithUTF8String:colorString];
         [ScreenMarker addTextWithRect: rect text: textString font: font colorString: colorStringString angle: angle useSizeToFit: useSizeToFit];
     }
@@ -1007,10 +1011,10 @@ extern "C"
     void _SetTextTileMode(const char* text, const char* fontName, float fontSize, const char* colorString, float angle, float horizontalMargin, float verticalMargin)
     {
         NSString* textString = [NSString stringWithUTF8String:text];
-        NSString* fontNameString = [NSString stringWithUTF8String:fontName];
         UIFont* font = nil;
-        if (fontNameString != nil)
+        if (fontName != nil)
         {
+            NSString* fontNameString = [NSString stringWithUTF8String:fontName];
             font = [UIFont fontWithName:fontNameString size:fontSize];
         }
         NSString* colorStringString = [NSString stringWithUTF8String:colorString];
