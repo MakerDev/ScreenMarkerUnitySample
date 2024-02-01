@@ -57,6 +57,14 @@
     return radians * 180 / M_PI;
 };
 
++ (UIImage*) getUIImageFromByteArray: (Byte*) byteData
+                               length: (int) length
+{
+    NSData* data = [NSData dataWithBytes:byteData length:length];
+    UIImage* image = [UIImage imageWithData:data];
+    return image;
+}
+
 @end
 
 @interface ScreenMarkerView : NSObject
@@ -259,8 +267,8 @@
     //    Images Source
     // NSBundle *bundle = [NSBundle bundleForClass: [ScreenMarkerView class]];
     // _imageSource = [UIImage imageWithContentsOfFile:[bundle pathForResource:@"hana_logo" ofType:@"png"]];
-    // _imageRotation = 0;
-    // _imagePosition = CGPointMake(mainBoundSize.width/2, mainBoundSize.height/2);
+    _imageRotation = 0;
+    _imagePosition = CGPointMake(mainBoundSize.width/2, mainBoundSize.height/2);
 }
 
 
@@ -591,56 +599,54 @@
                  horizontalMargin:(NSInteger)horizontalMargin verticalMargin:(NSInteger)verticalMargin {
     
 
-       [self clearTextAll];
-       
-       UILabel* textLabel = [[UILabel alloc] init];
-       NSString* tiledText;
-       UIFont* tiledFont;
-       
-       
-       if(text) {
-           [textLabel setText:text];
-           tiledText = text;
-       } else {
-           [textLabel setText:_userInfo];
-           tiledText = _userInfo;
-       }
-       
-       
-       if(font) {
-           [textLabel setFont:font];
-           tiledFont = font;
-       } else {
-           [textLabel setFont:_defaultFont ];
-           tiledFont = _defaultFont;
-       }
+    [self clearTextAll];
+    
+    UILabel* textLabel = [[UILabel alloc] init];
+    NSString* tiledText;
+    UIFont* tiledFont;
+    
+    
+    if(text) {
+        [textLabel setText:text];
+        tiledText = text;
+    } else {
+        [textLabel setText:_userInfo];
+        tiledText = _userInfo;
+    }
+    
+    
+    if(font) {
+        [textLabel setFont:font];
+        tiledFont = font;
+    } else {
+        [textLabel setFont:_defaultFont ];
+        tiledFont = _defaultFont;
+    }
 
-       [textLabel sizeToFit];
-       
-       unsigned textColor = 0;
-       [[NSScanner scannerWithString:colorString] scanHexInt:&textColor];
-       
-       
-       NSDictionary *attr = [NSDictionary dictionaryWithObjects:
-                                   @[tiledFont, UIColorFromARGB(textColor)]
-                                                              forKeys:
-                                   @[NSFontAttributeName, NSForegroundColorAttributeName]];
+    [textLabel sizeToFit];
+    
+    unsigned textColor = 0;
+    [[NSScanner scannerWithString:colorString] scanHexInt:&textColor];
+    
+    
+    NSDictionary *attr = [NSDictionary dictionaryWithObjects:
+                                @[tiledFont, UIColorFromARGB(textColor)]
+                                                            forKeys:
+                                @[NSFontAttributeName, NSForegroundColorAttributeName]];
 
-        int newWidth, newHeight;
+    int newWidth, newHeight;
     
     newWidth = textLabel.frame.size.width > image.size.width ? textLabel.frame.size.width : image.size.width;
     
     newHeight = image.size.height + textLabel.frame.size.height;
     
-       UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
+    UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
        
     [image drawAtPoint:CGPointMake(newWidth/2 - image.size.width/2, 0)];
     
-       [tiledText drawAtPoint:CGPointMake(newWidth/2 - textLabel.frame.size.width/2, image.size.height) withAttributes: attr];
-       UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
-       UIGraphicsEndImageContext();
-    
-    
+    [tiledText drawAtPoint:CGPointMake(newWidth/2 - textLabel.frame.size.width/2, image.size.height) withAttributes: attr];
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
     
     _tiledImage = [Utils getRotatedImage:result rotation: angle  horizontalMargin:horizontalMargin verticalMargin:verticalMargin];
     
@@ -989,8 +995,7 @@ extern "C"
 
     void _SetImageSource(Byte* byteData, int length)
     {
-        NSData *pictureData = [NSData dataWithBytes:byteData length:length];
-        UIImage *image = [UIImage imageWithData:pictureData];
+        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length]
         [ScreenMarker setImageSource: image];
     }
 
@@ -1007,10 +1012,41 @@ extern "C"
         [ScreenMarker setTextTileMode: textString font: font colorString: colorStringString angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
     }
 
-    void _SetImageTileMode(const char* imageFilePath, int angle, int horizontalMargin, int verticalMargin)
+    void _SetImageTileMode(Byte* byteData, int length, int angle, int horizontalMargin, int verticalMargin)
     {
-        NSString* imageFilePathString = [NSString stringWithUTF8String:imageFilePath];
-        UIImage* image = [UIImage imageWithContentsOfFile:imageFilePathString];
+        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length]
         [ScreenMarker setImageTileMode: image angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
+    }
+
+    void _UnsetTextTileMode()
+    {
+        [ScreenMarker unsetTextTileMod];
+    }
+
+    void _SetImageTileModeWithText(
+        Byte* byteData, 
+        int length, 
+        const char* text, 
+        const char* fontName, 
+        float fontSize, 
+        const char* colorString, 
+        int angle, 
+        int horizontalMargin, int verticalMargin)
+    {
+        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length]
+        NSString* textString = [NSString stringWithUTF8String:text];
+        UIFont* font = nil;
+        if (fontName != nil)
+        {
+            NSString* fontNameString = [NSString stringWithUTF8String:fontName];
+            font = [UIFont fontWithName:fontNameString size:fontSize];
+        }
+        NSString* colorStringString = [NSString stringWithUTF8String:colorString];
+        [ScreenMarker setImageTileModeWithText: image text: textString font: font colorString: colorStringString angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
+    }
+
+    void _UnsetImageTileMode()
+    {
+        [ScreenMarker unsetImageTileMode];
     }
 }

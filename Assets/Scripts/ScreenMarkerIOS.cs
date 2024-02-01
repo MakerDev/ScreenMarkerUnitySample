@@ -17,13 +17,32 @@ public class ScreenMarkerIOS : MonoBehaviour
     private static extern void _SetImageSource(byte[] imageBytes, int length);
 
     [DllImport("__Internal")]
-    private static extern void _SetTextTileMode(string text, string fontName, 
-        float fontSize, string colorString, int angle, int horizontalMargin, int verticalMargin);
-
-
+    private static extern void _SetTextTileMode(
+        string text, 
+        string fontName, 
+        float fontSize, 
+        string colorString, 
+        int angle, 
+        int horizontalMargin, int verticalMargin);
     [DllImport("__Internal")]
-    private static extern void _SetImageTileMode(string imageFilePath, int angle, int horizontalMargin, int verticalMargin);
-
+    private static extern void _SetImageTileMode(
+        byte[] imageBytes, 
+        int length, 
+        int angle, 
+        int horizontalMargin, int verticalMargin);
+    [DllImport("__Internal")]
+    private static extern void _SetImageTileModeWithText(
+        byte[] imageBytes, int length,
+        string text,
+        string fontName,
+        float fontSize,
+        string colorString,
+        int angle, 
+        int horizontalMargin, int verticalMargin);
+    [DllImport("__Internal")]
+    private static extern void _UnsetTextTileMode();
+    [DllImport("__Internal")]
+    private static extern void _UnsetImageTileMode();
 
     public Texture2D image;
 
@@ -54,19 +73,33 @@ public class ScreenMarkerIOS : MonoBehaviour
         _HideScreenMarker();
     }
 
-    public void SetTextTileMode(string text, string font, float fontSize, string color, int angle, int horizontalMargin, int verticalMargin)
+    public void SetTextTileMode()
     {
-        _SetTextTileMode(text, font, 0, color, angle, horizontalMargin, verticalMargin);
+        _SetTextTileMode("hello", null, 0.0f, "4c000000", 30, 50, 50);
     }
 
-    public void SetImageTileMode(string image, int angle, int horizontalMargin, int verticalMargin)
+    public void SetImageTileMode()
     {
-        _SetImageTileMode(image, angle, horizontalMargin, verticalMargin);
+        var pngBytes = image.EncodeToPNG();
+        _SetImageTileMode(pngBytes, pngBytes.Length, -30, 0, 20);
     }
 
     public void PrintTileTextAndImage()
     {
-        SetTextTileMode("hello", null, 0.0f, "4c000000", 30, 50, 50);
-        // SetImageTileMode(imageSource, -30, 0, 10);
+        var pngBytes = image.EncodeToPNG();
+        _SetImageTileModeWithText(
+            pngBytes, 
+            pngBytes.Length, 
+            "hello", 
+            null, 
+            0.0f,
+            "4c000000", 30, 50, 50);
+    }
+
+    public void Reset()
+    {
+        _UnsetTextTileMode();
+        _UnsetImageTileMode();
+        _ShowScreenMarker();
     }
 }
