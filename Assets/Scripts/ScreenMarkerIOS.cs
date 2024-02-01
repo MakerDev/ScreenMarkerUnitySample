@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScreenMarkerIOS : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class ScreenMarkerIOS : MonoBehaviour
     private static extern void _HideScreenMarker();
 
     [DllImport("__Internal")]
-    private static extern void _SetImageSource(string imageFilePath);
+    private static extern void _SetImageSource(byte[] imageBytes, int length);
 
     [DllImport("__Internal")]
     private static extern void _SetTextTileMode(string text, string font, string color, 
@@ -23,7 +24,7 @@ public class ScreenMarkerIOS : MonoBehaviour
     private static extern void _SetImageTileMode(string imageFilePath, int angle, int horizontalMargin, int verticalMargin);
 
 
-    public string imageSource = "Assets/Sprites/hana_logo.png";
+    public Texture2D image;
 
     void Start()
     {
@@ -33,7 +34,12 @@ public class ScreenMarkerIOS : MonoBehaviour
     public void InitScreenMarker(string userInfo)
     {
         _InitScreenMarker(userInfo);
-        _SetImageSource(imageSource);
+
+        if (image != null)
+        {
+            var pngBytes = image.EncodeToPNG();
+            _SetImageSource(pngBytes, pngBytes.Length);
+        }
     }
 
 
@@ -60,6 +66,6 @@ public class ScreenMarkerIOS : MonoBehaviour
     public void PrintTileTextAndImage()
     {
         SetTextTileMode("hello", null, "4c000000", 30, 50, 50);
-        SetImageTileMode(imageSource, -30, 0, 10);
+        // SetImageTileMode(imageSource, -30, 0, 10);
     }
 }

@@ -987,10 +987,10 @@ extern "C"
         [ScreenMarker setScreenMarkerAlpha: alpha];
     }
 
-    void _SetImageSource(const char* imageFilePath)
+    void _SetImageSource(const NSData* byteData, int length)
     {
-        NSString* imageFilePathString = [NSString stringWithUTF8String:imageFilePath];
-        UIImage* image = [UIImage imageWithContentsOfFile:imageFilePathString];
+        NSData *pictureData = [NSData dataWithBytes:byteData];
+        UIImage *image = [[UIImage alloc]initWithData:pictureData];
         [ScreenMarker setImageSource: image];
     }
 
