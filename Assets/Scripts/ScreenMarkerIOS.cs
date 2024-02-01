@@ -59,7 +59,7 @@ public class ScreenMarkerIOS : MonoBehaviour
 
     public void PrintTileTextAndImage()
     {
-        SetTextTileMode("hello", null, "4c000000", 30, 0, 20);
+        SetTextTileMode("hello", null, "4c000000", 30, 50, 50);
         SetImageTileMode(imageSource, -30, 0, 10);
     }
 }
