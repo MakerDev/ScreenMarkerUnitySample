@@ -995,7 +995,7 @@ extern "C"
 
     void _SetImageSource(Byte* byteData, int length)
     {
-        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length]
+        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length];
         [ScreenMarker setImageSource: image];
     }
 
@@ -1014,7 +1014,7 @@ extern "C"
 
     void _SetImageTileMode(Byte* byteData, int length, int angle, int horizontalMargin, int verticalMargin)
     {
-        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length]
+        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length];
         [ScreenMarker setImageTileMode: image angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
     }
 
@@ -1033,7 +1033,7 @@ extern "C"
         int angle, 
         int horizontalMargin, int verticalMargin)
     {
-        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length]
+        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length];
         NSString* textString = [NSString stringWithUTF8String:text];
         UIFont* font = nil;
         if (fontName != nil)

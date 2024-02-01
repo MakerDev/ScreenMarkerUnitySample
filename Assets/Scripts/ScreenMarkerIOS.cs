@@ -86,14 +86,16 @@ public class ScreenMarkerIOS : MonoBehaviour
 
     public void PrintTileTextAndImage()
     {
-        var pngBytes = image.EncodeToPNG();
-        _SetImageTileModeWithText(
-            pngBytes, 
-            pngBytes.Length, 
-            "hello", 
-            null, 
-            0.0f,
-            "4c000000", 30, 50, 50);
+        // var pngBytes = image.EncodeToPNG();
+        // _SetImageTileModeWithText(
+        //     pngBytes, 
+        //     pngBytes.Length, 
+        //     "hello", 
+        //     null, 
+        //     0.0f,
+        //     "4c000000", 30, 50, 50);
+        SetTextTileMode();
+        SetImageTileMode();
     }
 
     public void Reset()
