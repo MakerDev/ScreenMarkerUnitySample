@@ -1001,9 +1001,10 @@ extern "C"
     {
         NSString* textString = [NSString stringWithUTF8String:text];
         NSString* fontNameString = [NSString stringWithUTF8String:fontName];
+        UIFont* font = nil;
         if (fontNameString != nil)
         {
-            UIFont* font = [UIFont fontWithName:fontNameString size:fontSize];
+            font = [UIFont fontWithName:fontNameString size:fontSize];
         }
         NSString* colorStringString = [NSString stringWithUTF8String:colorString];
         [ScreenMarker setTextTileMode: textString font: font colorString: colorStringString angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];

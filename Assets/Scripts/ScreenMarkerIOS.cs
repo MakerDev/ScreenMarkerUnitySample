@@ -6,17 +6,17 @@ using UnityEngine;
 public class ScreenMarkerIOS : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void _InitScreenMarker(string userInfo);
+    public static extern void _InitScreenMarker(string userInfo);
     [DllImport("__Internal")]
-    private static extern void _ShowScreenMarker();
+    public static extern void _ShowScreenMarker();
     [DllImport("__Internal")]
-    private static extern void _HideScreenMarker();
+    public static extern void _HideScreenMarker();
     [DllImport("__Internal")]
-    private static extern void _SetTextTileMode(string text, string font, string color, 
+    public static extern void _SetTextTileMode(string text, string font, string color, 
         int angle, int horizontalMargin, int verticalMargin);
 
     [DllImport("__Internal")]
-    private static extern void _SetImageTileMode(Texture2D image, int angle, int horizontalMargin, int verticalMargin);
+    public static extern void _SetImageTileMode(Texture2D image, int angle, int horizontalMargin, int verticalMargin);
 
     void Start()
     {
