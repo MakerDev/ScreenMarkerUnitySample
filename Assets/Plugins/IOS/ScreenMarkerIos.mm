@@ -2,313 +2,6 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ScreenMarker : NSObject
-
-//  Library Implementation Test
-+ (void)implementationTest;
-
-//  ScreenMarker Functions
-+ (void)initScreenMarker: (NSString*) userInfo;
-
-+ (void)showScreenMarker;
-+ (void)hideScreenMarker;
-+ (void)setScreenMarkerAlpha: (CGFloat) alpha;
-
-
-//  Text Functions
-+ (void) addTextWithRect: (CGRect) rect
-                    text: (nullable NSString*) text;
-+ (void) addTextWithRect: (CGRect) rect
-                    text: (nullable NSString*) text
-                    font: (nullable UIFont*) font
-             colorString: (NSString*) colorString
-                   angle: (NSInteger) angle
-            useSizeToFit: (bool) useSizeToFit;
-
-
-+ (void) addTextWithCenter: (CGPoint) center
-                      text: (nullable NSString*) text;
-+ (void) addTextWithCenter: (CGPoint) center
-                      text: (nullable NSString*) text
-                      font: (nullable UIFont*) font
-               colorString: (NSString*) colorString
-                     angle: (NSInteger) angle;
-
-+ (void) clearTextAll;
-+ (void) setTextAll: (NSString*) text;
-+ (void) setTextRotationAll: (NSInteger) angle;
-+ (void) setTextColorAll: (NSString*) colorString;
-+ (void) setTextFontAll: (UIFont*) font;
-+ (void) setTextTileMode:   (nullable NSString*) text
-                    font: (nullable UIFont*) font
-             colorString: (NSString*) colorString
-                   angle: (NSInteger) angle
-        horizontalMargin: (NSInteger) horizontalMargin
-          verticalMargin: (NSInteger) verticalMargin;
-+ (void) unsetTextTileMod;
-
-
-//  Image Functions
-+ (void) setImageSource: (nullable UIImage*) image;
-+ (void) setImagePosition: (CGPoint) center;
-+ (void) setImageRotation: (NSInteger) angle;
-+ (void) setImageTileMode:  (UIImage*) image
-                    angle: (NSInteger) angle
-         horizontalMargin: (NSInteger) horizontalMargin
-           verticalMargin: (NSInteger) verticalMargin;
-
-+ (void) setImageTileModeWithText:  (UIImage*) image
-text: (nullable NSString*) text
-       font: (nullable UIFont*) font
-colorString: (NSString*) colorString
-           angle: (NSInteger) angle
-horizontalMargin: (NSInteger) horizontalMargin
-  verticalMargin: (NSInteger) verticalMargin;
-
-+ (void) unsetImageTileMode;
-
-@end
-
-
-
-/**
- * Interface 부분으로
- * 일반적으로 동명의 Function을 호출한다.
- */
-@implementation ScreenMarker
-
-static ScreenMarkerView* screenMarkerView = nil;
-NSString* const defaultColorString = @"FF000000";
-
-/**
- *  라이브러리 버전 코드 출력.
- *  연동여부 확인용 Function
- */
-+(void) implementationTest
-{
-    NSDictionary *info = [[NSBundle bundleForClass: [ScreenMarker class]] infoDictionary];
-    NSString *version = [info objectForKey:@"CFBundleShortVersionString"];
-    NSLog(@"\nScreenMarkingOverlay\nVersion %@", version);
-}
-
-
-/**
- *  ScreenMarker 초기화
- *  @param userInfo 일반적으로 행원번호. ScreenMarker내 텍스트의 default 값으로 쓰인다.
- */
-+ (void) initScreenMarker: (NSString*) userInfo
-{
-    if(!screenMarkerView) {
-        screenMarkerView = [[ScreenMarkerView alloc] initWithUserId: userInfo];
-    } else {
-        [screenMarkerView setUserInfo: userInfo];
-        [screenMarkerView setDefaultLayout];
-        [screenMarkerView showScreenMarker];
-    }
-}
-
-/**
- *  ScreenMarker 보이기
- */
-+ (void) showScreenMarker {
-    [screenMarkerView showScreenMarker];
-}
-
-/**
- *  ScreenMarker 감추기
- */
-+ (void) hideScreenMarker {
-    [screenMarkerView hideScreenMarker];
-}
-
-/**
- *  ScreenMarker 의 전체 Aplha(투명도 조절)
- *  @param   alpha 1~0의 값을 가지며 '0'은 투명 '1'은 불투명
-            텍스트, 이미지의 Alpha값과 별개로 동작한다.
- */
-+ (void)setScreenMarkerAlpha: (CGFloat) alpha {
-    [screenMarkerView setScreenMarkerAlpha: alpha];
-}
-
-
-//Text Functions
-
-
-/**
- *  ScreenMarker 내 TextView 생성 (Rect 정보 이용)
- *  @param   rect Text가 생성될 위치에 대한 Rect 정보.
- *  @param   text Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
- *  @param   font Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
- *  @param   colorString ARGB의 32비트 색상String값.
- *  @param   angle TextView의 회전각(Degree)
- *  @param   useSizeToFit {rect}의 사이즈를 텍스트 사이즈에 딱 맞게 조정
- */
-+ (void) addTextWithRect:   (CGRect) rect
-                            text: (nullable NSString*) text
-                            font: (nullable UIFont*) font
-                            colorString: (NSString*) colorString
-                            angle: (NSInteger) angle
-                            useSizeToFit: (bool) useSizeToFit
-{
-    [screenMarkerView addTextWithRect:rect text:text font:font colorString:colorString angle:angle useSizeToFit:useSizeToFit];
-}
-
-+ (void) addTextWithRect:   (CGRect) rect
-                    text: (nullable NSString*) text {
-    [screenMarkerView addTextWithRect:rect text:text font:nil colorString:defaultColorString angle:0 useSizeToFit:true];
-}
-
-
-
-/**
- *  ScreenMarker 내 TextView 생성 (Center Point 이용)
- *  @param   center Text가 생성될 텍스트의 중심점 위치.
- *  @param   text Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
- *  @param   font Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
- *  @param   colorString ARGB의 32비트 색상String값.
- *  @param   angle TextView의 회전각(Degree)
- */
-
-+ (void) addTextWithCenter: (CGPoint) center
-                            text: (nullable NSString*) text
-                            font: (nullable UIFont*) font
-                            colorString: (NSString*) colorString
-                            angle: (NSInteger) angle
-
-{
-    [screenMarkerView addTextWithCenter:center text:text font:font colorString:colorString angle:angle];
-}
-
-+ (void) addTextWithCenter: (CGPoint) center
-                      text: (nullable NSString*) text {
-    [screenMarkerView addTextWithCenter:center text:text font:nil colorString: defaultColorString angle:0];
-}
-
-
-/**
- *  ScreenMarker 내 모든 Text 제거
- */
-+ (void) clearTextAll {
-    [screenMarkerView clearTextAll];
-}
-
-/**
- *  ScreenMarker 내 모든 Text의 내용 변경
- *  변경 가능한 값은
-    1. Text - TextView의 Text 내용
-    2. Rotation - TextView의 최초생성 각도로부터의 회전각(Degree)
-    3. Color - TextView의 Text 색상
-    4. Font - TextView의 Font 및 FontSize
- */
-+ (void) setTextAll: (NSString*) text {
-    [screenMarkerView setTextAll:text];
-}
-
-+ (void) setTextRotationAll: (NSInteger) angle {
-    [screenMarkerView setTextRotationAll:angle];
-}
-
-+ (void) setTextColorAll: (NSString*) colorString {
-    [screenMarkerView setTextColorAll:colorString];
-}
-
-+ (void) setTextFontAll: (UIFont*) font {
-    [screenMarkerView setTextFontAll:font];
-}
-
-
-
-/**
- *  ScreenMarker 내 전체 텍스트를 제거 하고
- *  전달받은 Parameter의 대한 텍스트를 생성, 이미지화 하여 타일모드로 적용.
- *  @param   text Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
- *  @param   font Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
- *  @param   colorString ARGB의 32비트 색상String값.
- *  @param   angle Text의 회전각(Degree)
- *  @param   horizontalMargin Text간 상하 간격
- *  @param   verticalMargin Text간 좌우 간격
- *
- *  Margin 값의 경우 {angle}값에 관계없이 상하좌우에 적용된다.
- */
-+ (void) setTextTileMode:   (nullable NSString*) text
-                            font: (nullable UIFont*) font
-                            colorString: (NSString*) colorString
-                            angle: (NSInteger) angle
-                            horizontalMargin: (NSInteger) horizontalMargin
-                            verticalMargin: (NSInteger) verticalMargin
-
-{
-    [screenMarkerView setTextTileMode:text font:font colorString:colorString angle:angle horizontalMargin:horizontalMargin verticalMargin:verticalMargin];
-}
-
-/**
- *  ScreenMarker 내 Text의 Tile모드 해제.
- *  해제 시, 전체 텍스트 제거
- */
-+ (void) unsetTextTileMod {
-    [screenMarkerView unsetTextTileMod];
-}
-
-
-
-//Image Functions
-
-/**
- *  ScreenMarker 내 이미지는 한개만 사용
- *  변경가능한 속성은
-    1. Source - 이미지 파일
-    2. Position - 이미지의 중심점 위치
-    3. Rotation - 이미지의 최초생성 각도로부터의 회전각(Degree)
- */
-+ (void) setImageSource: (nullable UIImage*) image {
-    [screenMarkerView setImageSource: image];
-}
-
-+ (void) setImagePosition: (CGPoint) center {
-    [screenMarkerView setImagePosition: center];
-}
-
-+ (void) setImageRotation: (NSInteger) angle {
-    [screenMarkerView setImageRotation: angle];
-}
-
-/**
- *  ScreenMarker 내 Image의 Tile모드 활성화
- *  @param   image Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
- *  @param   angle Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
- *  @param   horizontalMargin ARGB의 32비트 색상String값.
- *  @param   verticalMargin TextView의 회전각(Degree)
- *
- *  Margin 값의 경우 {angle}값에 관계없이 상하좌우에 적용된다.
- */
-+ (void) setImageTileMode:  (UIImage*) image
-                            angle: (NSInteger) angle
-                            horizontalMargin: (NSInteger) horizontalMargin
-                            verticalMargin: (NSInteger) verticalMargin
-
-{
-    [screenMarkerView setImageTileMode:image angle:angle horizontalMargin:horizontalMargin verticalMargin:verticalMargin];
-}
-
-+ (void) setImageTileModeWithText:  (UIImage*) image
-            text: (nullable NSString*) text
-            font: (nullable UIFont*) font
-     colorString: (NSString*) colorString
-           angle: (NSInteger) angle
-horizontalMargin: (NSInteger) horizontalMargin
-                   verticalMargin: (NSInteger) verticalMargin
-{
-    [screenMarkerView setImageTileModeWithText:image text:text font:font colorString:colorString angle:angle horizontalMargin:horizontalMargin verticalMargin:verticalMargin];
-}
-
-/**
- *  ScreenMarker 내 Image의 Tile모드 해제.
- *  해제 시, 마지막 단일 Image모드의 상태로 전환
- */
-+ (void) unsetImageTileMode {
-    
-    [screenMarkerView unsetImageTileMode];
-}
 
 
 @interface Utils : NSObject
@@ -364,6 +57,7 @@ horizontalMargin: (NSInteger) horizontalMargin
     return radians * 180 / M_PI;
 };
 
+@end
 
 @interface ScreenMarkerView : NSObject
 //
@@ -849,7 +543,6 @@ horizontalMargin: (NSInteger) horizontalMargin
 }
 
 
-
 //
 //  Image Controllers
 //
@@ -955,6 +648,319 @@ horizontalMargin: (NSInteger) horizontalMargin
     
     [self showScreenMarker];
 }
+
+@end
+
+
+@interface ScreenMarker : NSObject
+
+//  Library Implementation Test
++ (void)implementationTest;
+
+//  ScreenMarker Functions
++ (void)initScreenMarker: (NSString*) userInfo;
+
++ (void)showScreenMarker;
++ (void)hideScreenMarker;
++ (void)setScreenMarkerAlpha: (CGFloat) alpha;
+
+
+//  Text Functions
++ (void) addTextWithRect: (CGRect) rect
+                    text: (nullable NSString*) text;
++ (void) addTextWithRect: (CGRect) rect
+                    text: (nullable NSString*) text
+                    font: (nullable UIFont*) font
+             colorString: (NSString*) colorString
+                   angle: (NSInteger) angle
+            useSizeToFit: (bool) useSizeToFit;
+
+
++ (void) addTextWithCenter: (CGPoint) center
+                      text: (nullable NSString*) text;
++ (void) addTextWithCenter: (CGPoint) center
+                      text: (nullable NSString*) text
+                      font: (nullable UIFont*) font
+               colorString: (NSString*) colorString
+                     angle: (NSInteger) angle;
+
++ (void) clearTextAll;
++ (void) setTextAll: (NSString*) text;
++ (void) setTextRotationAll: (NSInteger) angle;
++ (void) setTextColorAll: (NSString*) colorString;
++ (void) setTextFontAll: (UIFont*) font;
++ (void) setTextTileMode:   (nullable NSString*) text
+                    font: (nullable UIFont*) font
+             colorString: (NSString*) colorString
+                   angle: (NSInteger) angle
+        horizontalMargin: (NSInteger) horizontalMargin
+          verticalMargin: (NSInteger) verticalMargin;
++ (void) unsetTextTileMod;
+
+
+//  Image Functions
++ (void) setImageSource: (nullable UIImage*) image;
++ (void) setImagePosition: (CGPoint) center;
++ (void) setImageRotation: (NSInteger) angle;
++ (void) setImageTileMode:  (UIImage*) image
+                    angle: (NSInteger) angle
+         horizontalMargin: (NSInteger) horizontalMargin
+           verticalMargin: (NSInteger) verticalMargin;
+
++ (void) setImageTileModeWithText:  (UIImage*) image
+text: (nullable NSString*) text
+       font: (nullable UIFont*) font
+colorString: (NSString*) colorString
+           angle: (NSInteger) angle
+horizontalMargin: (NSInteger) horizontalMargin
+  verticalMargin: (NSInteger) verticalMargin;
+
++ (void) unsetImageTileMode;
+
+@end
+
+
+
+/**
+ * Interface 부분으로
+ * 일반적으로 동명의 Function을 호출한다.
+ */
+@implementation ScreenMarker
+
+static ScreenMarkerView* screenMarkerView = nil;
+NSString* const defaultColorString = @"FF000000";
+
+/**
+ *  라이브러리 버전 코드 출력.
+ *  연동여부 확인용 Function
+ */
++(void) implementationTest
+{
+    NSDictionary *info = [[NSBundle bundleForClass: [ScreenMarker class]] infoDictionary];
+    NSString *version = [info objectForKey:@"CFBundleShortVersionString"];
+    NSLog(@"\nScreenMarkingOverlay\nVersion %@", version);
+}
+
+
+/**
+ *  ScreenMarker 초기화
+ *  @param userInfo 일반적으로 행원번호. ScreenMarker내 텍스트의 default 값으로 쓰인다.
+ */
++ (void) initScreenMarker: (NSString*) userInfo
+{
+    if(!screenMarkerView) {
+        screenMarkerView = [[ScreenMarkerView alloc] initWithUserId: userInfo];
+    } else {
+        [screenMarkerView setUserInfo: userInfo];
+        [screenMarkerView setDefaultLayout];
+        [screenMarkerView showScreenMarker];
+    }
+}
+
+/**
+ *  ScreenMarker 보이기
+ */
++ (void) showScreenMarker {
+    [screenMarkerView showScreenMarker];
+}
+
+/**
+ *  ScreenMarker 감추기
+ */
++ (void) hideScreenMarker {
+    [screenMarkerView hideScreenMarker];
+}
+
+/**
+ *  ScreenMarker 의 전체 Aplha(투명도 조절)
+ *  @param   alpha 1~0의 값을 가지며 '0'은 투명 '1'은 불투명
+            텍스트, 이미지의 Alpha값과 별개로 동작한다.
+ */
++ (void)setScreenMarkerAlpha: (CGFloat) alpha {
+    [screenMarkerView setScreenMarkerAlpha: alpha];
+}
+
+
+//Text Functions
+
+
+/**
+ *  ScreenMarker 내 TextView 생성 (Rect 정보 이용)
+ *  @param   rect Text가 생성될 위치에 대한 Rect 정보.
+ *  @param   text Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
+ *  @param   font Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
+ *  @param   colorString ARGB의 32비트 색상String값.
+ *  @param   angle TextView의 회전각(Degree)
+ *  @param   useSizeToFit {rect}의 사이즈를 텍스트 사이즈에 딱 맞게 조정
+ */
++ (void) addTextWithRect:   (CGRect) rect
+                            text: (nullable NSString*) text
+                            font: (nullable UIFont*) font
+                            colorString: (NSString*) colorString
+                            angle: (NSInteger) angle
+                            useSizeToFit: (bool) useSizeToFit
+{
+    [screenMarkerView addTextWithRect:rect text:text font:font colorString:colorString angle:angle useSizeToFit:useSizeToFit];
+}
+
++ (void) addTextWithRect:   (CGRect) rect
+                    text: (nullable NSString*) text {
+    [screenMarkerView addTextWithRect:rect text:text font:nil colorString:defaultColorString angle:0 useSizeToFit:true];
+}
+
+
+
+/**
+ *  ScreenMarker 내 TextView 생성 (Center Point 이용)
+ *  @param   center Text가 생성될 텍스트의 중심점 위치.
+ *  @param   text Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
+ *  @param   font Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
+ *  @param   colorString ARGB의 32비트 색상String값.
+ *  @param   angle TextView의 회전각(Degree)
+ */
+
++ (void) addTextWithCenter: (CGPoint) center
+                            text: (nullable NSString*) text
+                            font: (nullable UIFont*) font
+                            colorString: (NSString*) colorString
+                            angle: (NSInteger) angle
+
+{
+    [screenMarkerView addTextWithCenter:center text:text font:font colorString:colorString angle:angle];
+}
+
++ (void) addTextWithCenter: (CGPoint) center
+                      text: (nullable NSString*) text {
+    [screenMarkerView addTextWithCenter:center text:text font:nil colorString: defaultColorString angle:0];
+}
+
+
+/**
+ *  ScreenMarker 내 모든 Text 제거
+ */
++ (void) clearTextAll {
+    [screenMarkerView clearTextAll];
+}
+
+/**
+ *  ScreenMarker 내 모든 Text의 내용 변경
+ *  변경 가능한 값은
+    1. Text - TextView의 Text 내용
+    2. Rotation - TextView의 최초생성 각도로부터의 회전각(Degree)
+    3. Color - TextView의 Text 색상
+    4. Font - TextView의 Font 및 FontSize
+ */
++ (void) setTextAll: (NSString*) text {
+    [screenMarkerView setTextAll:text];
+}
+
++ (void) setTextRotationAll: (NSInteger) angle {
+    [screenMarkerView setTextRotationAll:angle];
+}
+
++ (void) setTextColorAll: (NSString*) colorString {
+    [screenMarkerView setTextColorAll:colorString];
+}
+
++ (void) setTextFontAll: (UIFont*) font {
+    [screenMarkerView setTextFontAll:font];
+}
+
+
+
+/**
+ *  ScreenMarker 내 전체 텍스트를 제거 하고
+ *  전달받은 Parameter의 대한 텍스트를 생성, 이미지화 하여 타일모드로 적용.
+ *  @param   text Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
+ *  @param   font Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
+ *  @param   colorString ARGB의 32비트 색상String값.
+ *  @param   angle Text의 회전각(Degree)
+ *  @param   horizontalMargin Text간 상하 간격
+ *  @param   verticalMargin Text간 좌우 간격
+ *
+ *  Margin 값의 경우 {angle}값에 관계없이 상하좌우에 적용된다.
+ */
++ (void) setTextTileMode:   (nullable NSString*) text
+                            font: (nullable UIFont*) font
+                            colorString: (NSString*) colorString
+                            angle: (NSInteger) angle
+                            horizontalMargin: (NSInteger) horizontalMargin
+                            verticalMargin: (NSInteger) verticalMargin
+
+{
+    [screenMarkerView setTextTileMode:text font:font colorString:colorString angle:angle horizontalMargin:horizontalMargin verticalMargin:verticalMargin];
+}
+
+/**
+ *  ScreenMarker 내 Text의 Tile모드 해제.
+ *  해제 시, 전체 텍스트 제거
+ */
++ (void) unsetTextTileMod {
+    [screenMarkerView unsetTextTileMod];
+}
+
+
+
+//Image Functions
+
+/**
+ *  ScreenMarker 내 이미지는 한개만 사용
+ *  변경가능한 속성은
+    1. Source - 이미지 파일
+    2. Position - 이미지의 중심점 위치
+    3. Rotation - 이미지의 최초생성 각도로부터의 회전각(Degree)
+ */
++ (void) setImageSource: (nullable UIImage*) image {
+    [screenMarkerView setImageSource: image];
+}
+
++ (void) setImagePosition: (CGPoint) center {
+    [screenMarkerView setImagePosition: center];
+}
+
++ (void) setImageRotation: (NSInteger) angle {
+    [screenMarkerView setImageRotation: angle];
+}
+
+/**
+ *  ScreenMarker 내 Image의 Tile모드 활성화
+ *  @param   image Text의 내용. 'Nil'일 경우 "initScreenMarker"의 {userInfo} 값으로 적용
+ *  @param   angle Font 및 FontSize 정보. 'Nil' 일경우 시스템 폰트 12pt 사용
+ *  @param   horizontalMargin ARGB의 32비트 색상String값.
+ *  @param   verticalMargin TextView의 회전각(Degree)
+ *
+ *  Margin 값의 경우 {angle}값에 관계없이 상하좌우에 적용된다.
+ */
++ (void) setImageTileMode:  (UIImage*) image
+                            angle: (NSInteger) angle
+                            horizontalMargin: (NSInteger) horizontalMargin
+                            verticalMargin: (NSInteger) verticalMargin
+
+{
+    [screenMarkerView setImageTileMode:image angle:angle horizontalMargin:horizontalMargin verticalMargin:verticalMargin];
+}
+
++ (void) setImageTileModeWithText:  (UIImage*) image
+            text: (nullable NSString*) text
+            font: (nullable UIFont*) font
+     colorString: (NSString*) colorString
+           angle: (NSInteger) angle
+horizontalMargin: (NSInteger) horizontalMargin
+                   verticalMargin: (NSInteger) verticalMargin
+{
+    [screenMarkerView setImageTileModeWithText:image text:text font:font colorString:colorString angle:angle horizontalMargin:horizontalMargin verticalMargin:verticalMargin];
+}
+
+/**
+ *  ScreenMarker 내 Image의 Tile모드 해제.
+ *  해제 시, 마지막 단일 Image모드의 상태로 전환
+ */
++ (void) unsetImageTileMode {
+    
+    [screenMarkerView unsetImageTileMode];
+}
+
+
 
 @end
 
