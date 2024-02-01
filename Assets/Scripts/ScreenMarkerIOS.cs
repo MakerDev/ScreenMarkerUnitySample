@@ -18,7 +18,7 @@ public class ScreenMarkerIOS : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void _SetTextTileMode(string text, string fontName, 
-        float fontSize, string colorString, int angle, int horizontalMargin, int verticalMargin)
+        float fontSize, string colorString, int angle, int horizontalMargin, int verticalMargin);
 
 
     [DllImport("__Internal")]
