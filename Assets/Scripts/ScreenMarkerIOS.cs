@@ -6,17 +6,24 @@ using UnityEngine;
 public class ScreenMarkerIOS : MonoBehaviour
 {
     [DllImport("__Internal")]
-    public static extern void _InitScreenMarker(string userInfo);
+    private static extern void _InitScreenMarker(string userInfo);
     [DllImport("__Internal")]
-    public static extern void _ShowScreenMarker();
+    private static extern void _ShowScreenMarker();
     [DllImport("__Internal")]
-    public static extern void _HideScreenMarker();
+    private static extern void _HideScreenMarker();
+
     [DllImport("__Internal")]
-    public static extern void _SetTextTileMode(string text, string font, string color, 
+    private static extern void _SetImageSource(string imageFilePath);
+
+    [DllImport("__Internal")]
+    private static extern void _SetTextTileMode(string text, string font, string color, 
         int angle, int horizontalMargin, int verticalMargin);
 
     [DllImport("__Internal")]
-    public static extern void _SetImageTileMode(Texture2D image, int angle, int horizontalMargin, int verticalMargin);
+    private static extern void _SetImageTileMode(string imageFilePath, int angle, int horizontalMargin, int verticalMargin);
+
+
+    public string imageSource = "Assets/Sprites/hana_logo.png";
 
     void Start()
     {
@@ -26,7 +33,9 @@ public class ScreenMarkerIOS : MonoBehaviour
     public void InitScreenMarker(string userInfo)
     {
         _InitScreenMarker(userInfo);
+        _SetImageSource(imageSource);
     }
+
 
     public void ShowScreenMarker()
     {
@@ -41,5 +50,16 @@ public class ScreenMarkerIOS : MonoBehaviour
     public void SetTextTileMode(string text, string font, string color, int angle, int horizontalMargin, int verticalMargin)
     {
         _SetTextTileMode(text, font, color, angle, horizontalMargin, verticalMargin);
+    }
+
+    public void SetImageTileMode(string image, int angle, int horizontalMargin, int verticalMargin)
+    {
+        _SetImageTileMode(image, angle, horizontalMargin, verticalMargin);
+    }
+
+    public void PrintTileTextAndImage()
+    {
+        SetTextTileMode("hello", null, "4c000000", 30, 0, 20);
+        SetImageTileMode(imageSource, -30, 0, 10);
     }
 }

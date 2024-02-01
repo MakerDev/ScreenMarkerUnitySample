@@ -987,6 +987,13 @@ extern "C"
         [ScreenMarker setScreenMarkerAlpha: alpha];
     }
 
+    void _SetImageSource(const char* imageFilePath)
+    {
+        NSString* imageFilePathString = [NSString stringWithUTF8String:imageFilePath];
+        UIImage* image = [UIImage imageWithContentsOfFile:imageFilePathString];
+        [ScreenMarker setImageSource: image];
+    }
+
     void _AddTextWithRect(float x, float y, float width, float height, const char* text, const char* fontName, float fontSize, const char* colorString, float angle, bool useSizeToFit)
     {
         CGRect rect = CGRectMake(x, y, width, height);
@@ -1008,5 +1015,12 @@ extern "C"
         }
         NSString* colorStringString = [NSString stringWithUTF8String:colorString];
         [ScreenMarker setTextTileMode: textString font: font colorString: colorStringString angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
+    }
+
+    void _SetImageTileMode(const char* imageFilePath, float angle, float horizontalMargin, float verticalMargin)
+    {
+        NSString* imageFilePathString = [NSString stringWithUTF8String:imageFilePath];
+        UIImage* image = [UIImage imageWithContentsOfFile:imageFilePathString];
+        [ScreenMarker setImageTileMode: image angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
     }
 }
