@@ -1462,7 +1462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c932537018b8d2428131311756f713e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  imageSource: Assets/Sprites/hana_logo.png
+  image: {fileID: 2800000, guid: 9be6873064b7c5a45a1c08db7dff3f03, type: 3}
 --- !u!4 &1712066226
 Transform:
   m_ObjectHideFlags: 0

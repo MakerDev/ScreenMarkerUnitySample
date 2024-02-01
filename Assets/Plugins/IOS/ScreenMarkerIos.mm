@@ -987,28 +987,14 @@ extern "C"
         [ScreenMarker setScreenMarkerAlpha: alpha];
     }
 
-    void _SetImageSource(const NSData* byteData, int length)
+    void _SetImageSource(Byte* byteData, int length)
     {
-        NSData *pictureData = [NSData dataWithBytes:byteData];
-        UIImage *image = [[UIImage alloc]initWithData:pictureData];
+        NSData *pictureData = [NSData dataWithBytes:byteData length:length];
+        UIImage *image = [UIImage imageWithData:pictureData];
         [ScreenMarker setImageSource: image];
     }
 
-    void _AddTextWithRect(float x, float y, float width, float height, const char* text, const char* fontName, float fontSize, const char* colorString, float angle, bool useSizeToFit)
-    {
-        CGRect rect = CGRectMake(x, y, width, height);
-        NSString* textString = [NSString stringWithUTF8String:text];
-        UIFont* font = nil;
-        if (fontName != nil)
-        {
-            NSString* fontNameString = [NSString stringWithUTF8String:fontName];
-            font = [UIFont fontWithName:fontNameString size:fontSize];
-        }
-        NSString* colorStringString = [NSString stringWithUTF8String:colorString];
-        [ScreenMarker addTextWithRect: rect text: textString font: font colorString: colorStringString angle: angle useSizeToFit: useSizeToFit];
-    }
-
-    void _SetTextTileMode(const char* text, const char* fontName, float fontSize, const char* colorString, float angle, float horizontalMargin, float verticalMargin)
+    void _SetTextTileMode(const char* text, const char* fontName, float fontSize, const char* colorString, int angle, int horizontalMargin, int verticalMargin)
     {
         NSString* textString = [NSString stringWithUTF8String:text];
         UIFont* font = nil;
@@ -1021,7 +1007,7 @@ extern "C"
         [ScreenMarker setTextTileMode: textString font: font colorString: colorStringString angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
     }
 
-    void _SetImageTileMode(const char* imageFilePath, float angle, float horizontalMargin, float verticalMargin)
+    void _SetImageTileMode(const char* imageFilePath, int angle, int horizontalMargin, int verticalMargin)
     {
         NSString* imageFilePathString = [NSString stringWithUTF8String:imageFilePath];
         UIImage* image = [UIImage imageWithContentsOfFile:imageFilePathString];

@@ -17,8 +17,9 @@ public class ScreenMarkerIOS : MonoBehaviour
     private static extern void _SetImageSource(byte[] imageBytes, int length);
 
     [DllImport("__Internal")]
-    private static extern void _SetTextTileMode(string text, string font, string color, 
-        int angle, int horizontalMargin, int verticalMargin);
+    private static extern void _SetTextTileMode(string text, string fontName, 
+        float fontSize, string colorString, int angle, int horizontalMargin, int verticalMargin)
+
 
     [DllImport("__Internal")]
     private static extern void _SetImageTileMode(string imageFilePath, int angle, int horizontalMargin, int verticalMargin);
@@ -53,9 +54,9 @@ public class ScreenMarkerIOS : MonoBehaviour
         _HideScreenMarker();
     }
 
-    public void SetTextTileMode(string text, string font, string color, int angle, int horizontalMargin, int verticalMargin)
+    public void SetTextTileMode(string text, string font, float fontSize, string color, int angle, int horizontalMargin, int verticalMargin)
     {
-        _SetTextTileMode(text, font, color, angle, horizontalMargin, verticalMargin);
+        _SetTextTileMode(text, font, 0, color, angle, horizontalMargin, verticalMargin);
     }
 
     public void SetImageTileMode(string image, int angle, int horizontalMargin, int verticalMargin)
@@ -65,7 +66,7 @@ public class ScreenMarkerIOS : MonoBehaviour
 
     public void PrintTileTextAndImage()
     {
-        SetTextTileMode("hello", null, "4c000000", 30, 50, 50);
+        SetTextTileMode("hello", null, 0.0f, "4c000000", 30, 50, 50);
         // SetImageTileMode(imageSource, -30, 0, 10);
     }
 }
