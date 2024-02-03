@@ -993,10 +993,75 @@ extern "C"
         [ScreenMarker setScreenMarkerAlpha: alpha];
     }
 
-    void _SetImageSource(Byte* byteData, int length)
+    // Text
+    void _AddTextWithRect(
+        int x, int y, int width, int height, 
+        const char* text, const char* fontName, float fontSize, 
+        const char* colorString, 
+        int angle, 
+        bool useSizeToFit)
     {
-        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length];
-        [ScreenMarker setImageSource: image];
+        CGRect rect = CGRectMake(x, y, width, height);
+        NSString* textString = [NSString stringWithUTF8String:text];
+        UIFont* font = nil;
+        if (fontName != nil)
+        {
+            NSString* fontNameString = [NSString stringWithUTF8String:fontName];
+            font = [UIFont fontWithName:fontNameString size:fontSize];
+        }
+        NSString* colorStringString = [NSString stringWithUTF8String:colorString];
+        [ScreenMarker addTextWithRect: rect text: textString font: font colorString: colorStringString angle: angle useSizeToFit: useSizeToFit];
+    }
+
+    void _AddTextWithCenter(
+        int x, int y, 
+        const char* text, const char* fontName, float fontSize, 
+        const char* colorString, 
+        int angle)
+    {
+        CGPoint center = CGPointMake(x, y);
+        NSString* textString = [NSString stringWithUTF8String:text];
+        UIFont* font = nil;
+        if (fontName != nil)
+        {
+            NSString* fontNameString = [NSString stringWithUTF8String:fontName];
+            font = [UIFont fontWithName:fontNameString size:fontSize];
+        }
+        NSString* colorStringString = [NSString stringWithUTF8String:colorString];
+        [ScreenMarker addTextWithCenter: center text: textString font: font colorString: colorStringString angle: angle];
+    }
+
+    void _ClearTextAll()
+    {
+        [ScreenMarker clearTextAll];
+    }
+
+    void _SetTextAll(const char* text)
+    {
+        NSString* textString = [NSString stringWithUTF8String:text];
+        [ScreenMarker setTextAll: textString];
+    }
+
+    void _SetTextRotationAll(int angle)
+    {
+        [ScreenMarker setTextRotationAll: angle];
+    }
+
+    void _SetTextColorAll(const char* colorString)
+    {
+        NSString* colorStringString = [NSString stringWithUTF8String:colorString];
+        [ScreenMarker setTextColorAll: colorStringString];
+    }
+
+    void _SetTextFontAll(const char* fontName, float fontSize)
+    {
+        UIFont* font = nil;
+        if (fontName != nil)
+        {
+            NSString* fontNameString = [NSString stringWithUTF8String:fontName];
+            font = [UIFont fontWithName:fontNameString size:fontSize];
+        }
+        [ScreenMarker setTextFontAll: font];
     }
 
     void _SetTextTileMode(const char* text, const char* fontName, float fontSize, const char* colorString, int angle, int horizontalMargin, int verticalMargin)
@@ -1012,15 +1077,32 @@ extern "C"
         [ScreenMarker setTextTileMode: textString font: font colorString: colorStringString angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
     }
 
+    void _UnsetTextTileMode()
+    {
+        [ScreenMarker unsetTextTileMod];
+    }
+
+    // Image
+    void _SetImage(Byte* byteData, int length)
+    {
+        UIImage *image = [Utils getUIImageFromByteArray: byteData length: length];
+        [ScreenMarker setImageSource: image];
+    }
+
+    void _SetImagePosition(int x, int y)
+    {
+        [ScreenMarker setImagePosition: CGPointMake(x, y)];
+    }
+
+    void _SetImageRotation(int angle)
+    {
+        [ScreenMarker setImageRotation: angle];
+    }
+
     void _SetImageTileMode(Byte* byteData, int length, int angle, int horizontalMargin, int verticalMargin)
     {
         UIImage *image = [Utils getUIImageFromByteArray: byteData length: length];
         [ScreenMarker setImageTileMode: image angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
-    }
-
-    void _UnsetTextTileMode()
-    {
-        [ScreenMarker unsetTextTileMod];
     }
 
     void _SetImageTileModeWithText(

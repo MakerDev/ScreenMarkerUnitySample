@@ -45,4 +45,4 @@ ScreenMarker 안드로이드 사용 가이드
 ## 2.7. 빌드
 안드로이드로 빌드하여 실행하시면 됩니다. 아래는 Print Tiled Text and Image 버튼을 눌렀을 때의 예시입니다.
 
-<img src="Images/Android/2_PrintTile Example.jpg" width="300px">
+<img src="Images/Android/2_PrintTileExample.jpg" width="300px">
