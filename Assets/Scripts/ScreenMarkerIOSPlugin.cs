@@ -19,8 +19,8 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
     [DllImport("__Internal")]
     private static extern void _AddTextWithRect(
         int x, int y, int width, int height,
-        string text, string fontName, float fontSize, 
-        string colorString, 
+        string text, string fontName, float fontSize,
+        string colorString,
         float angle,
         bool useSizeToFit);
     [DllImport("__Internal")]
@@ -41,11 +41,11 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
     private static extern void _SetTextFontAll(string fontName, float fontSize);
     [DllImport("__Internal")]
     private static extern void _SetTextTileMode(
-        string text, 
-        string fontName, 
-        float fontSize, 
-        string colorString, 
-        float angle, 
+        string text,
+        string fontName,
+        float fontSize,
+        string colorString,
+        float angle,
         int horizontalMargin, int verticalMargin);
     [DllImport("__Internal")]
     private static extern void _UnsetTextTileMode();
@@ -58,9 +58,9 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
     private static extern void _SetImageRotation(float angle);
     [DllImport("__Internal")]
     private static extern void _SetImageTileMode(
-        byte[] imageBytes, 
-        int length, 
-        float angle, 
+        byte[] imageBytes,
+        int length,
+        float angle,
         int horizontalMargin, int verticalMargin);
     [DllImport("__Internal")]
     private static extern void _SetImageTileModeWithText(
@@ -69,14 +69,13 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
         string fontName,
         float fontSize,
         string colorString,
-        float angle, 
+        float angle,
         int horizontalMargin, int verticalMargin);
     [DllImport("__Internal")]
     private static extern void _UnsetImageTileMode();
 
 
-    [SerializeField]
-    private Texture2D _image;
+    private const string DEFAULT_COLOR = "a0000000";
 
 
     public void InitScreenMarker(string userInfo, Texture2D image)
@@ -106,30 +105,26 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
     }
 
     public void AddTextWithRect(
-        int x, int y, int width, int height, 
-        string text, 
+        int x, int y, int width, int height,
+        string text,
         string fontName,
-        float fontSize, 
-        string colorString, 
+        float fontSize,
+        string colorString,
         float angle, int align, bool useSizeToFit)
     {
+        if (string.IsNullOrEmpty(colorString))
+        {
+            colorString = DEFAULT_COLOR;
+        }
+
         _AddTextWithRect(x, y, width, height, text, fontName, fontSize, colorString, (int)angle, useSizeToFit);
     }
-
-    public void AddTextWithRectAndroid(Rect rect, string text)
+    public void AddTextWithRect(
+        int x, int y, int width, int height,
+        string text)
     {
-        throw new NotSupportedException("This function is not supported on IOS.");
-    }
 
-    public void AddTextWithCenterIOS(
-        int x, int y, 
-        string text, 
-        string fontName, 
-        float fontSize, 
-        string colorString, 
-        float angle)
-    {
-        _AddTextWithCenter(x, y, text, fontName, fontSize, colorString, (int)angle);
+        _AddTextWithRect(x, y, width, height, text, null, 20, DEFAULT_COLOR, 0, true);
     }
 
     public void ClearTextAll()
@@ -149,6 +144,11 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
 
     public void SetTextColorAll(string colorString)
     {
+        if (string.IsNullOrEmpty(colorString))
+        {
+            colorString = DEFAULT_COLOR;
+        }
+
         _SetTextColorAll(colorString);
     }
 
@@ -157,9 +157,14 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
         _SetTextFontAll(fontName, fontSize);
     }
 
-    public void SetTextTileMode(string text, string fontName, float fontSize, string fontColor, float angle, int horizontalMargin=50, int verticalMargin=50)
+    public void SetTextTileMode(string text, string fontName, float fontSize, string colorString, float angle, int horizontalMargin = 50, int verticalMargin = 50)
     {
-        _SetTextTileMode(text, fontName, fontSize, fontColor, (int)angle, horizontalMargin, verticalMargin);
+        if (string.IsNullOrEmpty(colorString))
+        {
+            colorString = DEFAULT_COLOR;
+        }
+
+        _SetTextTileMode(text, fontName, fontSize, colorString, (int)angle, horizontalMargin, verticalMargin);
     }
 
     public void UnsetTextTileMode()
@@ -183,21 +188,27 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
         _SetImageRotation((int)angle);
     }
 
-    public void SetImageTileMode(Texture2D image, float angle, int horizontalMargin=0, int verticalMargin=10)
+    public void SetImageTileMode(Texture2D image, float angle, int horizontalMargin = 0, int verticalMargin = 10)
     {
         var pngBytes = image.EncodeToPNG();
         _SetImageTileMode(pngBytes, pngBytes.Length, (int)angle, horizontalMargin, verticalMargin);
     }
 
     public void SetImageTileModeWithText(
-        Texture2D image, 
-        string text, string fontName, float fontSize, 
-        string fontColor, 
-        float angle, 
-        int horizontalMargin=0, int verticalMargin=20)
+        Texture2D image,
+        string text, string fontName, float fontSize,
+        string colorString,
+        float angle,
+        int horizontalMargin = 0, int verticalMargin = 20)
     {
         var pngBytes = image.EncodeToPNG();
-        _SetImageTileModeWithText(pngBytes, pngBytes.Length, text, fontName, fontSize, fontColor, (int)angle, horizontalMargin, verticalMargin);
+
+        if (colorString == null)
+        {
+            colorString = DEFAULT_COLOR;
+        }
+
+        _SetImageTileModeWithText(pngBytes, pngBytes.Length, text, fontName, fontSize, colorString, (int)angle, horizontalMargin, verticalMargin);
     }
 
     public void UnsetImageTileMode()

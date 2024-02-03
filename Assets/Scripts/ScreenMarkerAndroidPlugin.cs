@@ -6,22 +6,8 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-
     public class ScreenMarkerAndroidPlugin : MonoBehaviour, IScreenMarker
     {
-        public enum FontType
-        {
-            NORMAL = 0,
-            BOLD,
-            ITALIC,
-            BOLD_ITALIC,
-        }
-
-        public enum Gravity
-        {
-            Center = 0,
-        }
-
         private AndroidJavaClass _unityClass;
         private AndroidJavaObject _unityActivity;
         private AndroidJavaClass _pluginClass;
@@ -29,6 +15,7 @@ namespace Assets.Scripts
 
         private const string PLUGIN_NAME = "com.eis.plugin.ScreenMarker"; // Change this to your package name
 
+        private int DEFAULT_COLOR = ColorStringToInt("a0000000");
 
         public void InitScreenMarker(string userInfo, Texture2D defaultImage)
         {
@@ -85,29 +72,25 @@ namespace Assets.Scripts
             }));
         }
 
-        public void AddTextWithRect(int x, int y, int width, int height, string text, string fontName, float fontSize, string colorString, float angle, int align, bool useSizeToFit)
+        public void AddTextWithRect(int x, int y, int width, int height, string text)
         {
             var rect = new AndroidJavaObject("android.graphics.Rect", x, y, width, height);
-            var font = ToAndroidTypeface(fontName, FontType.NORMAL);
-            var colorInt = ColorStringToInt(colorString);
-            _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-            {
-                _pluginInstance.Call("addTextWithRect", rect, text, font, (int)fontSize, angle, colorInt, align);
-            }));
-        }
 
-        public void AddTextWithRectAndroid(Rect rect, string text)
-        {
-            var rectAndroid = new AndroidJavaObject("android.graphics.Rect", rect.x, rect.y, rect.width, rect.height);
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
                 _pluginInstance.Call("addTextWithRect", rect, text);
             }));
         }
 
-        public void AddTextWithCenterIOS(int x, int y, string text, string fontName, float fontSize, string colorString, float angle)
+        public void AddTextWithRect(int x, int y, int width, int height, string text, string fontName, float fontSize, string colorString, float angle, int align, bool useSizeToFit)
         {
-            throw new NotSupportedException("This function is not supported on Android.");
+            var rect = new AndroidJavaObject("android.graphics.Rect", x, y, width, height);
+            var font = ToAndroidTypeface(fontName, FontType.NORMAL);
+            var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
+            _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
+            {
+                _pluginInstance.Call("addTextWithRect", rect, text, font, (int)fontSize, angle, colorInt, align);
+            }));
         }
 
         public void ClearTextAll()
@@ -136,7 +119,7 @@ namespace Assets.Scripts
 
         public void SetTextColorAll(string colorString)
         {
-            int colorInt = ColorStringToInt(colorString);
+            var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
 
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
@@ -150,14 +133,14 @@ namespace Assets.Scripts
             int horizontalMargin=50, int verticalMargin=50)
         {
             var font = ToAndroidTypeface(fontName, (FontType)(int)fontSize);
-            int colorInt = ColorStringToInt(colorString);
+            var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
 
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
                 _pluginInstance.Call(
                     "setTextTileMode",
                     horizontalMargin, verticalMargin,
-                    text, font, colorInt,
+                    text, font, (int)fontSize, colorInt,
                     angle);
             }));
         }
@@ -222,7 +205,7 @@ namespace Assets.Scripts
             int horizontalMargin=0, int verticalMargin=10)
         {
             var bitmap = ToAndroidBitmap(image);
-            int colorInt = ColorStringToInt(colorString);
+            var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
             var font = ToAndroidTypeface(fontName, FontType.NORMAL);
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
@@ -247,10 +230,14 @@ namespace Assets.Scripts
             return int.Parse(colorString, System.Globalization.NumberStyles.HexNumber);
         }
 
-        private static AndroidJavaObject ToAndroidTypeface(string fontName, FontType fontType)
+        private AndroidJavaObject ToAndroidTypeface(string fontName, FontType fontType)
         {
-            var assets = CallStaticOnce("android.content.res.Resources", "getAssets");
-            return CallStaticOnce("android.graphics.Typeface", "create", fontName, (int)fontType);
+            if (string.IsNullOrEmpty(fontName))
+                return null;
+
+            var assets = _unityActivity.Call<AndroidJavaObject>("getAssets");
+
+            return CallStaticOnce("android.graphics.Typeface", "createFromAsset", assets, $"fonts/{fontName}.ttf");
         }
 
         private static AndroidJavaObject ToAndroidBitmap(Texture2D texture2D)

@@ -11,25 +11,60 @@ namespace Assets.Scripts
     {
         [SerializeField]
         private Texture2D _image = null;
+
         private IScreenMarker _screenMarkerPlugin = null;
 
         private void Start()
         {
             _screenMarkerPlugin = ScreenMarkerPlugin.GetScreenMarker();
             _screenMarkerPlugin.InitScreenMarker("12345", _image);
+            _screenMarkerPlugin.ShowScreenMarker();
+        }
+
+        public void ShowScreenMarker()
+        {
+            _screenMarkerPlugin.ShowScreenMarker();
+        }
+
+        public void AddTextWithRect()
+        {
+            _screenMarkerPlugin.AddTextWithRect(0, 220, 150, 270, "AddTextWithRect");
+        }
+
+        public void ClearTextAll()
+        {
+            _screenMarkerPlugin.ClearTextAll();
+        }
+
+        public void SetTextTileMode()
+        {
+#if UNITY_ANDROID
+            _screenMarkerPlugin.SetTextTileMode("SetTextTileMode", "NanumGothicBold", 30, null, 20, 200, 50);
+#elif UNITY_IOS
+            _screenMarkerPlugin.SetTextTileMode("SetTextTileMode", "NanumGothicBold", 30, null, 20);
+#endif
         }
 
         public void PrintTileTextAndImage()
         {
-            _screenMarkerPlugin.SetTextTileMode("Hello", null, 0, "4c000000", 30, 50, 50);
             _screenMarkerPlugin.SetImageTileMode(_image, -30, 0, 20);
+#if UNITY_ANDROID
+            _screenMarkerPlugin.SetTextTileMode("Hello", null, 30, "4c000000", 30.0f, 200, 50);
+#elif UNITY_IOS
+            _screenMarkerPlugin.SetTextTileMode("Hello", null, 30, "4c000000", 30.0f);
+#endif
         }
 
         public void Reset()
         {
-            _screenMarkerPlugin.UnsetTextTileMode();
             _screenMarkerPlugin.UnsetImageTileMode();
+            _screenMarkerPlugin.UnsetTextTileMode();
             _screenMarkerPlugin.ShowScreenMarker();
+        }
+
+        public void HideScreenMarker()
+        {
+            _screenMarkerPlugin.HideScreenMarker();
         }
     }
 }
