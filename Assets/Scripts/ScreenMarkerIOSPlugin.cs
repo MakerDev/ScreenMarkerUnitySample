@@ -21,20 +21,20 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
         int x, int y, int width, int height,
         string text, string fontName, float fontSize,
         string colorString,
-        float angle,
+        int angle,
         bool useSizeToFit);
     [DllImport("__Internal")]
     private static extern void _AddTextWithCenter(
         int x, int y,
         string text, string fontName, float fontSize,
         string colorString,
-        float angle);
+        int angle);
     [DllImport("__Internal")]
     private static extern void _ClearTextAll();
     [DllImport("__Internal")]
     private static extern void _SetTextAll(string text);
     [DllImport("__Internal")]
-    private static extern void _SetTextRotateAll(float angle);
+    private static extern void _SetTextRotateAll(int angle);
     [DllImport("__Internal")]
     private static extern void _SetTextColorAll(string colorString);
     [DllImport("__Internal")]
@@ -45,7 +45,7 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
         string fontName,
         float fontSize,
         string colorString,
-        float angle,
+        int angle,
         int horizontalMargin, int verticalMargin);
     [DllImport("__Internal")]
     private static extern void _UnsetTextTileMode();
@@ -55,12 +55,12 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
     [DllImport("__Internal")]
     private static extern void _SetImagePosition(int x, int y);
     [DllImport("__Internal")]
-    private static extern void _SetImageRotation(float angle);
+    private static extern void _SetImageRotation(int angle);
     [DllImport("__Internal")]
     private static extern void _SetImageTileMode(
         byte[] imageBytes,
         int length,
-        float angle,
+        int angle,
         int horizontalMargin, int verticalMargin);
     [DllImport("__Internal")]
     private static extern void _SetImageTileModeWithText(
@@ -69,7 +69,7 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
         string fontName,
         float fontSize,
         string colorString,
-        float angle,
+        int angle,
         int horizontalMargin, int verticalMargin);
     [DllImport("__Internal")]
     private static extern void _UnsetImageTileMode();
