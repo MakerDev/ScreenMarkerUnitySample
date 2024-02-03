@@ -1091,7 +1091,9 @@ extern "C"
 
     void _SetImagePosition(int x, int y)
     {
-        [ScreenMarker setImagePosition: CGPointMake(x, y)];
+        CGPoint point = CGPointMake(x, y);
+
+        [ScreenMarker setImagePosition: point];
     }
 
     void _SetImageRotation(int angle)

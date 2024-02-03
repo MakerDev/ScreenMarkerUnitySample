@@ -34,7 +34,7 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
     [DllImport("__Internal")]
     private static extern void _SetTextAll(string text);
     [DllImport("__Internal")]
-    private static extern void _SetTextRotateAll(int angle);
+    private static extern void _SetTextRotationAll(int angle);
     [DllImport("__Internal")]
     private static extern void _SetTextColorAll(string colorString);
     [DllImport("__Internal")]
@@ -139,7 +139,7 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
 
     public void SetTextRotateAll(float angle)
     {
-        _SetTextRotateAll((int)angle);
+        _SetTextRotationAll((int)angle);
     }
 
     public void SetTextColorAll(string colorString)
