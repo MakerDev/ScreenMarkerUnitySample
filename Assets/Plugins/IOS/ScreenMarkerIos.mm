@@ -1069,6 +1069,8 @@ extern "C"
 
     void _SetTextTileMode(const char* text, const char* fontName, float fontSize, const char* colorString, int angle, int horizontalMargin, int verticalMargin)
     {
+        CGFloat scaleFactor = [UIScreen mainScreen].scale;
+
         NSString* textString = [NSString stringWithUTF8String:text];
         UIFont* font = nil;
         if (fontName != nil)
@@ -1077,7 +1079,7 @@ extern "C"
             font = [UIFont fontWithName:fontNameString size:fontSize];
         }
         NSString* colorStringString = [NSString stringWithUTF8String:colorString];
-        [ScreenMarker setTextTileMode: textString font: font colorString: colorStringString angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
+        [ScreenMarker setTextTileMode: textString font: font colorString: colorStringString angle: angle horizontalMargin: (int)horizontalMargin/scaleFactor verticalMargin: (int)verticalMargin/scaleFactor];
     }
 
     void _UnsetTextTileMode()
@@ -1095,7 +1097,6 @@ extern "C"
     void _SetImagePosition(int x, int y)
     {
         CGFloat scaleFactor = [UIScreen mainScreen].scale;
-        CGFloat scaleFactor = [UIScreen mainScreen].scale;
 
         CGPoint point = CGPointMake((int)x / scaleFactor, (int)y / scaleFactor);
         [ScreenMarker setImagePosition: point];
@@ -1108,8 +1109,10 @@ extern "C"
 
     void _SetImageTileMode(Byte* byteData, int length, int angle, int horizontalMargin, int verticalMargin)
     {
+        CGFloat scaleFactor = [UIScreen mainScreen].scale;
+
         UIImage *image = [Utils getUIImageFromByteArray: byteData length: length];
-        [ScreenMarker setImageTileMode: image angle: angle horizontalMargin: horizontalMargin verticalMargin: verticalMargin];
+        [ScreenMarker setImageTileMode: image angle: angle horizontalMargin: (int)horizontalMargin/scaleFactor verticalMargin: (int)verticalMargin/scaleFactor];
     }
 
     void _SetImageTileModeWithText(
