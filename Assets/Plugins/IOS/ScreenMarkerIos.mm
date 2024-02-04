@@ -1001,7 +1001,8 @@ extern "C"
         int angle, 
         bool useSizeToFit)
     {
-        CGRect rect = CGRectMake(x, y, width, height);
+        CGFloat scaleFactor = [UIScreen mainScreen].scale;
+        CGRect rect = CGRectMake((int)x / scale, (int)y / scale, (int)width / scale, (int)height / scale);
         NSString* textString = [NSString stringWithUTF8String:text];
         UIFont* font = nil;
         if (fontName != nil)
@@ -1019,7 +1020,9 @@ extern "C"
         const char* colorString, 
         int angle)
     {
-        CGPoint center = CGPointMake(x, y);
+        CGFloat scaleFactor = [UIScreen mainScreen].scale;
+
+        CGPoint center = CGPointMake((int)x / scale, (int)y / scale);
         NSString* textString = [NSString stringWithUTF8String:text];
         UIFont* font = nil;
         if (fontName != nil)
@@ -1091,8 +1094,9 @@ extern "C"
 
     void _SetImagePosition(int x, int y)
     {
-        CGPoint point = CGPointMake(x, y);
+        CGFloat scaleFactor = [UIScreen mainScreen].scale;
 
+        CGPoint center = CGPointMake((int)x / scale, (int)y / scale);
         [ScreenMarker setImagePosition: point];
     }
 
