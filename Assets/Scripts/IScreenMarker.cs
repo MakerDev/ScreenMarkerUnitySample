@@ -85,6 +85,7 @@ namespace Assets.Scripts
         void SetTextAll(string text);
         void SetTextRotateAll(float angle);
         void SetTextColorAll(string colorString);
+        void SetTextFontAll(string fontName, float fontSize);
         void SetTextTileMode(
             string text,
             string fontName,

@@ -70,9 +70,7 @@ namespace Assets.Scripts
 
         public void AddTextWithRect(int x, int y, int width, int height, string text)
         {
-            var rect = new AndroidJavaObject(
-                "android.graphics.Rect",
-                FromDpToPx(x), FromDpToPx(y), FromDpToPx(width), FromDpToPx(height));
+            var rect = new AndroidJavaObject("android.graphics.Rect", x, y, width, height);
 
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
@@ -82,9 +80,7 @@ namespace Assets.Scripts
 
         public void AddTextWithRect(int x, int y, int width, int height, string text, string fontName, float fontSize, string colorString, float angle, int align, bool useSizeToFit)
         {
-            var rect = new AndroidJavaObject(
-                "android.graphics.Rect", 
-                FromDpToPx(x), FromDpToPx(y), FromDpToPx(width), FromDpToPx(height));
+            var rect = new AndroidJavaObject("android.graphics.Rect", x, y, width, height);
             var font = ToAndroidTypeface(fontName, FontType.NORMAL);
             var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
@@ -95,7 +91,7 @@ namespace Assets.Scripts
 
         public void AddTextWithCenter(int x, int y, string text, string fontName, float fontSize, string colorString, float angle)
         {
-            var point = new AndroidJavaObject("android.graphics.Point", FromDpToPx(x), FromDpToPx(y));
+            var point = new AndroidJavaObject("android.graphics.Point", x, y);
             var font = ToAndroidTypeface(fontName, FontType.NORMAL);
             var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
 
@@ -139,6 +135,16 @@ namespace Assets.Scripts
             }));
         }
 
+        public void SetTextFontAll(string fontName, float fontSize)
+        {
+            var font = ToAndroidTypeface(fontName, (FontType)(int)fontSize);
+
+            _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
+            {
+                _pluginInstance.Call("setTextFontAll", font, (int)fontSize);
+            }));
+        }
+
         public void SetTextTileMode(
             string text, string fontName, float fontSize, string colorString,
             float angle,
@@ -168,7 +174,7 @@ namespace Assets.Scripts
         public void SetImage(Texture2D image)
         {
             var bitmap = ToAndroidBitmap(image);
-            
+
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
                 _pluginInstance.Call("setImageSource", bitmap);
@@ -194,7 +200,7 @@ namespace Assets.Scripts
                     "setImageRotation",
                     (float)angle);
             }));
-        }        
+        }
 
         public void SetImageTileMode(Texture2D image, float angle, int horizontalMargin = 0, int verticalMargin = 20)
         {
@@ -237,11 +243,6 @@ namespace Assets.Scripts
             }));
         }
 
-        private static int FromDpToPx(int dp)
-        {
-            return (int)(dp * (Screen.dpi / 160));
-        }
-
         private static int ColorStringToInt(string colorString)
         {
             return int.Parse(colorString, System.Globalization.NumberStyles.HexNumber);
@@ -269,7 +270,7 @@ namespace Assets.Scripts
             var ratio = Screen.dpi / 160;
             int targetWidth = (int)(texture2D.width * ratio);
             int targetHeight = (int)(texture2D.height * ratio);
-            
+
             RenderTexture rt = new RenderTexture(targetWidth, targetHeight, 24);
             RenderTexture.active = rt;
             Graphics.Blit(texture2D, rt);
