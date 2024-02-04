@@ -119,12 +119,18 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
 
         _AddTextWithRect(x, y, width, height, text, fontName, fontSize, colorString, (int)angle, useSizeToFit);
     }
+
     public void AddTextWithRect(
         int x, int y, int width, int height,
         string text)
     {
 
         _AddTextWithRect(x, y, width, height, text, null, 20, DEFAULT_COLOR, 0, true);
+    }
+
+    public void AddTextWithCenter(int x, int y, string text, string fontName, float fontSize, string colorString, float angle)
+    {
+        _AddTextWithCenter(x, y, text, fontName, fontSize, colorString, (int)angle);
     }
 
     public void ClearTextAll()

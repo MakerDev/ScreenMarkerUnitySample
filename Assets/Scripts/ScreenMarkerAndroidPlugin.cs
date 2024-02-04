@@ -93,6 +93,18 @@ namespace Assets.Scripts
             }));
         }
 
+        public void AddTextWithCenter(int x, int y, string text, string fontName, float fontSize, string colorString, float angle)
+        {
+            var point = new AndroidJavaObject("android.graphics.Point", x, y);
+            var font = ToAndroidTypeface(fontName, FontType.NORMAL);
+            var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
+
+            _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
+            {
+                _pluginInstance.Call("addTextWithCenter", point, text, font, (int)fontSize, angle, colorInt);
+            }));
+        }
+
         public void ClearTextAll()
         {
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
@@ -242,8 +254,12 @@ namespace Assets.Scripts
 
         private static AndroidJavaObject ToAndroidBitmap(Texture2D texture2D)
         {
+            
             byte[] pngBytes = texture2D.EncodeToPNG();
-            return CallStaticOnce("android.graphics.BitmapFactory", "decodeByteArray", pngBytes, 0, pngBytes.Length);
+            var bytes = texture2D.GetRawTextureData();
+            Debug.LogError("ToAndroidBitmap" + pngBytes.Length);
+            //return CallStaticOnce("android.graphics.BitmapFactory", "decodeByteArray", pngBytes, 0, pngBytes.Length);
+            return CallStaticOnce("android.graphics.BitmapFactory", "decodeByteArray", bytes, 0, bytes.Length);
         }
 
         private static AndroidJavaObject CallStaticOnce(string className, string methodName, params object[] args)

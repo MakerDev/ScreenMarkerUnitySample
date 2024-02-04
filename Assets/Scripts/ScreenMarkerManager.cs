@@ -28,7 +28,8 @@ namespace Assets.Scripts
 
         public void AddTextWithRect()
         {
-            _screenMarkerPlugin.AddTextWithRect(0, 220, 150, 270, "AddTextWithRect");
+            _screenMarkerPlugin.AddTextWithCenter(200, 200, "AddTextCen", null, 18, null, 90.0f);
+            _screenMarkerPlugin.ShowScreenMarker();
         }
 
         public void ClearTextAll()

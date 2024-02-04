@@ -62,6 +62,12 @@ namespace Assets.Scripts
         void HideScreenMarker();
         void SetScreenMarkerAlpha(float alpha);
 
+        void AddTextWithCenter(
+            int x, int y, string text,
+            string fontName,
+            float fontSize,
+            string colorString,
+            float angle);
         void AddTextWithRect(
             int x, int y, int width, int height,
             string text, 
