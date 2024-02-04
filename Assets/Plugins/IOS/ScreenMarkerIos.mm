@@ -1095,6 +1095,7 @@ extern "C"
     void _SetImagePosition(int x, int y)
     {
         CGFloat scaleFactor = [UIScreen mainScreen].scale;
+        CGFloat scaleFactor = [UIScreen mainScreen].scale;
 
         CGPoint point = CGPointMake((int)x / scaleFactor, (int)y / scaleFactor);
         [ScreenMarker setImagePosition: point];
