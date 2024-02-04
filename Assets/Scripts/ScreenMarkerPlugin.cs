@@ -2,9 +2,9 @@ using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ScreenMarker.Native;
 
-
-namespace Assets.Scripts
+namespace ScreenMarker
 {
     public class ScreenMarkerPlugin : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace ScreenMarker.Native
 {
     public class ScreenMarkerAndroidPlugin : MonoBehaviour, IScreenMarker
     {
