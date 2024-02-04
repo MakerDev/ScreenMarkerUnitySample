@@ -45,9 +45,9 @@ namespace Assets.Scripts
         public void SetTextTileMode()
         {
 #if UNITY_ANDROID
-            _screenMarkerPlugin.SetTextTileMode("나눔고딕", "NanumGothicBold", 30, null, 20, 200, 50);
+            _screenMarkerPlugin.SetTextTileMode("가평물결", "GapyeongWave", 30, null, 20, 200, 50);
 #elif UNITY_IOS
-            _screenMarkerPlugin.SetTextTileMode("나눔고딕", "NanumGothicBold", 30, null, 20);
+            _screenMarkerPlugin.SetTextTileMode("가평물결", "GapyeongWave", 30, null, 20);
 #endif
         }
 
