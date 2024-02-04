@@ -177,7 +177,7 @@ namespace Assets.Scripts
 
         public void SetImagePosition(int x, int y)
         {
-            var point = new AndroidJavaObject("android.graphics.Point", FromDpToPx(x), FromDpToPx(y));
+            var point = new AndroidJavaObject("android.graphics.Point", x, y);
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
                 _pluginInstance.Call(

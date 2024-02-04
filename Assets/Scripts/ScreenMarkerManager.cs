@@ -23,7 +23,6 @@ namespace Assets.Scripts
 
         public void ShowScreenMarker()
         {
-            _screenMarkerPlugin.SetImage(_image);
             _screenMarkerPlugin.ShowScreenMarker();
         }
 
