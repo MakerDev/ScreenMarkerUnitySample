@@ -23,6 +23,7 @@ namespace Assets.Scripts
 
         public void ShowScreenMarker()
         {
+            _screenMarkerPlugin.SetImage(_image);
             _screenMarkerPlugin.ShowScreenMarker();
         }
 
@@ -37,12 +38,17 @@ namespace Assets.Scripts
             _screenMarkerPlugin.ClearTextAll();
         }
 
+        public void SetImageTileMode()
+        {
+            _screenMarkerPlugin.SetImageTileMode(_image, 30);
+        }
+
         public void SetTextTileMode()
         {
 #if UNITY_ANDROID
-            _screenMarkerPlugin.SetTextTileMode("SetTextTileMode", "NanumGothicBold", 30, null, 20, 200, 50);
+            _screenMarkerPlugin.SetTextTileMode("나눔고딕", "NanumGothicBold", 30, null, 20, 200, 50);
 #elif UNITY_IOS
-            _screenMarkerPlugin.SetTextTileMode("SetTextTileMode", "NanumGothicBold", 30, null, 20);
+            _screenMarkerPlugin.SetTextTileMode("나눔고딕", "NanumGothicBold", 30, null, 20);
 #endif
         }
 

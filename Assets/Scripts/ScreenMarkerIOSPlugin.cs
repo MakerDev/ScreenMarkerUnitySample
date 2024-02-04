@@ -130,6 +130,11 @@ public class ScreenMarkerIOSPlugin : MonoBehaviour, IScreenMarker
 
     public void AddTextWithCenter(int x, int y, string text, string fontName, float fontSize, string colorString, float angle)
     {
+        if (string.IsNullOrEmpty(colorString))
+        {
+            colorString = DEFAULT_COLOR;
+        }
+
         _AddTextWithCenter(x, y, text, fontName, fontSize, colorString, (int)angle);
     }
 

@@ -35,11 +35,7 @@ namespace Assets.Scripts
 
             if (defaultImage != null)
             {
-                var bitmap = ToAndroidBitmap(defaultImage);
-                _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-                {
-                    _pluginInstance.Call("setImageSource", bitmap);
-                }));
+                SetImage(defaultImage);
             }
         }
 
@@ -74,7 +70,9 @@ namespace Assets.Scripts
 
         public void AddTextWithRect(int x, int y, int width, int height, string text)
         {
-            var rect = new AndroidJavaObject("android.graphics.Rect", x, y, width, height);
+            var rect = new AndroidJavaObject(
+                "android.graphics.Rect",
+                FromDpToPx(x), FromDpToPx(y), FromDpToPx(width), FromDpToPx(height));
 
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
@@ -84,7 +82,9 @@ namespace Assets.Scripts
 
         public void AddTextWithRect(int x, int y, int width, int height, string text, string fontName, float fontSize, string colorString, float angle, int align, bool useSizeToFit)
         {
-            var rect = new AndroidJavaObject("android.graphics.Rect", x, y, width, height);
+            var rect = new AndroidJavaObject(
+                "android.graphics.Rect", 
+                FromDpToPx(x), FromDpToPx(y), FromDpToPx(width), FromDpToPx(height));
             var font = ToAndroidTypeface(fontName, FontType.NORMAL);
             var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
@@ -95,7 +95,7 @@ namespace Assets.Scripts
 
         public void AddTextWithCenter(int x, int y, string text, string fontName, float fontSize, string colorString, float angle)
         {
-            var point = new AndroidJavaObject("android.graphics.Point", x, y);
+            var point = new AndroidJavaObject("android.graphics.Point", FromDpToPx(x), FromDpToPx(y));
             var font = ToAndroidTypeface(fontName, FontType.NORMAL);
             var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
 
@@ -142,7 +142,7 @@ namespace Assets.Scripts
         public void SetTextTileMode(
             string text, string fontName, float fontSize, string colorString,
             float angle,
-            int horizontalMargin=50, int verticalMargin=50)
+            int horizontalMargin = 50, int verticalMargin = 50)
         {
             var font = ToAndroidTypeface(fontName, (FontType)(int)fontSize);
             var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
@@ -168,16 +168,16 @@ namespace Assets.Scripts
         public void SetImage(Texture2D image)
         {
             var bitmap = ToAndroidBitmap(image);
-
+            
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
-                _pluginInstance.Call("setImage", bitmap);
+                _pluginInstance.Call("setImageSource", bitmap);
             }));
         }
 
         public void SetImagePosition(int x, int y)
         {
-            var point = new AndroidJavaObject("android.graphics.Point", x, y);
+            var point = new AndroidJavaObject("android.graphics.Point", FromDpToPx(x), FromDpToPx(y));
             _unityActivity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
             {
                 _pluginInstance.Call(
@@ -194,9 +194,9 @@ namespace Assets.Scripts
                     "setImageRotation",
                     (float)angle);
             }));
-        }
+        }        
 
-        public void SetImageTileMode(Texture2D image, float angle, int horizontalMargin=0, int verticalMargin=20)
+        public void SetImageTileMode(Texture2D image, float angle, int horizontalMargin = 0, int verticalMargin = 20)
         {
             var bitmap = ToAndroidBitmap(image);
 
@@ -214,7 +214,7 @@ namespace Assets.Scripts
             string text,
             string fontName, float fontSize, string colorString,
             float angle,
-            int horizontalMargin=0, int verticalMargin=10)
+            int horizontalMargin = 0, int verticalMargin = 10)
         {
             var bitmap = ToAndroidBitmap(image);
             var colorInt = string.IsNullOrEmpty(colorString) ? DEFAULT_COLOR : ColorStringToInt(colorString);
@@ -237,6 +237,11 @@ namespace Assets.Scripts
             }));
         }
 
+        private static int FromDpToPx(int dp)
+        {
+            return (int)(dp * (Screen.dpi / 160));
+        }
+
         private static int ColorStringToInt(string colorString)
         {
             return int.Parse(colorString, System.Globalization.NumberStyles.HexNumber);
@@ -254,12 +259,24 @@ namespace Assets.Scripts
 
         private static AndroidJavaObject ToAndroidBitmap(Texture2D texture2D)
         {
-            
+            texture2D = ResizeTextureToDensity(texture2D);
             byte[] pngBytes = texture2D.EncodeToPNG();
-            var bytes = texture2D.GetRawTextureData();
-            Debug.LogError("ToAndroidBitmap" + pngBytes.Length);
-            //return CallStaticOnce("android.graphics.BitmapFactory", "decodeByteArray", pngBytes, 0, pngBytes.Length);
-            return CallStaticOnce("android.graphics.BitmapFactory", "decodeByteArray", bytes, 0, bytes.Length);
+            return CallStaticOnce("android.graphics.BitmapFactory", "decodeByteArray", pngBytes, 0, pngBytes.Length);
+        }
+
+        private static Texture2D ResizeTextureToDensity(Texture2D texture2D)
+        {
+            var ratio = Screen.dpi / 160;
+            int targetWidth = (int)(texture2D.width * ratio);
+            int targetHeight = (int)(texture2D.height * ratio);
+            
+            RenderTexture rt = new RenderTexture(targetWidth, targetHeight, 24);
+            RenderTexture.active = rt;
+            Graphics.Blit(texture2D, rt);
+            Texture2D result = new Texture2D(targetWidth, targetHeight);
+            result.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), 0, 0);
+            result.Apply();
+            return result;
         }
 
         private static AndroidJavaObject CallStaticOnce(string className, string methodName, params object[] args)
