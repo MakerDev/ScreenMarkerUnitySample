@@ -27,6 +27,11 @@ namespace Assets.Scripts
             _screenMarkerPlugin.ShowScreenMarker();
         }
 
+        public void SetAlpha()
+        {
+            _screenMarkerPlugin.SetScreenMarkerAlpha(0.5f);
+        }
+
         public void AddTextWithRect2()
         {
             _screenMarkerPlugin.AddTextWithRect(150, 150, 200, 200, "Hello", null, 18, "a000ff00", 30.0f, (int)Gravity.LEFT, true);

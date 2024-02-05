@@ -350,7 +350,9 @@
 }
 
 - (void) setScreenMarkerAlpha:(CGFloat)alpha {
-    [_screenMarkerView setAlpha: alpha];
+    _screenMarkerAlpha = alpha;
+    [self showScreenMarker];
+    // [_screenMarkerView setAlpha: alpha];
 }
 
 
